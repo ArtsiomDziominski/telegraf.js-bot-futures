@@ -63,6 +63,7 @@ export function takeProfit(ctx) {
 
 export function cancelOrders(ctx) {
     if (checkUser(ctx)) return MESSAGE.NoPassword;
+    const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
     const symbolForCancel = ctx.update.callback_query.message.reply_markup.inline_keyboard[0][0].text;
     ctx.editMessageReplyMarkup({})
     cancelOpenOrder(symbolForCancel).then(r => sendAnswer(chatId, r.data));
@@ -76,7 +77,7 @@ export function getMessageCancelOpenOrder(ctx) {
 
 export function logoutUser(ctx) {
     if (checkUser(ctx)) return '❌⛔️ Сначала нужно войти в аккаунт ⛔️❌';
-
+    const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
     UserStore.whitList = UserStore.whitList.filter(chatIdUser => chatIdUser !== chatId);
     return 'Мы без тебя to the moon 🚀\nВы вышли!'
 }
