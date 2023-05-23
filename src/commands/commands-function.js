@@ -51,7 +51,7 @@ export function getCurrentOrders(ctx) {
     if (checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetCurrentOrder)
         .then(r => {
-            let text = '';
+            let text = 'Профит:\n';
             const currentOrders = r?.data;
             UserStore.currentOrders = r.data;
             if (!currentOrders) return 'Список пуст';
