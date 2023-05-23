@@ -1,17 +1,24 @@
-import {PASSWORD, TOKEN} from "../config/config.js";
-import {Markup, Telegraf} from "telegraf";
+import {PASSWORD, TOKEN} from "../../config/config.js";
+import {Telegraf} from "telegraf";
 import UserStore from "../store/index.js";
 import {message} from "telegraf/filters";
 import {MESSAGE} from "../const/const.js";
-import {btnCancelOrders, btnCurrentOrder, btnProfit, getBtnMenu, getBtnTrading} from "../../buttons/inline-button.js";
+import {
+    btnCancelOrders,
+    btnCurrentOrder,
+    btnProfit,
+    getBtnMenu, getBtnNotification,
+    getBtnSetting,
+    getBtnTrading
+} from "../../buttons/inline-button.js";
 import {
     cancelOrders, cancelWatching,
     getCurrentOrders,
-    getMessageCancelOpenOrder,
+    getMessageCancelOpenOrder, getNotifications, getProfit,
     getWatchingSymbols, logoutUser,
     newOrder,
     setPassword,
-    takeProfit
+    takeProfit, toggleNotificationNewOrder
 } from "./commands-function.js";
 import {buttonStart} from "../../buttons/button.js";
 import {getTradingMessage} from "../mixins/get-message.js";
@@ -29,7 +36,7 @@ export function botCommandsStart() {
 }
 
 function botCommands() {
-    bot.command('newOrder', (ctx) => ctx.reply(newOrder(ctx))); // password общий (если я ввожу, то другие могут пользоваться), нужно сделать индивидуальный
+    bot.command('newOrder', (ctx) => ctx.reply(newOrder(ctx)));
     bot.command('neworder', (ctx) => ctx.reply(newOrder(ctx)));
     bot.command('watching', async (ctx) => await getWatchingSymbols(ctx));
     bot.command('profit', async (ctx) => ctx.reply(await getCurrentOrders(ctx), await btnCurrentOrder()));
@@ -50,10 +57,14 @@ function botAction() {
     bot.action('takeProfit', (ctx) => takeProfit(ctx));
 
     bot.action('watching', async (ctx) => getWatchingSymbols(ctx));
+    bot.action('profit', async (ctx) => getProfit(ctx));
 
     bot.action('closeKeyboard', (ctx) => ctx.editMessageReplyMarkup({}));
 
     bot.action('main-menu', (ctx) => ctx.editMessageText('Меню:', getBtnMenu(ctx)));
+    bot.action('notification-setting', async (ctx) => ctx.editMessageText(await getNotifications(), await getBtnNotification(ctx)));
+    // bot.action('notification-new-order', (ctx) => ctx.editMessageText(toggleNotificationNewOrder(), getBtnNotification(ctx)));
+    bot.action('notification-new-order', async (ctx) => ctx.answerCbQuery(MESSAGE.FunctionNotWorking))//ctx.editMessageReplyMarkup(await toggleNotificationNewOrder(ctx)));
     botActionMenu();
 }
 
@@ -66,4 +77,6 @@ function userMessage() {
 
 function botActionMenu() {
     bot.action('trading', (ctx) => ctx.editMessageText(getTradingMessage(ctx), getBtnTrading(ctx)));
+    bot.action('profile', (ctx) => ctx.answerCbQuery(MESSAGE.FunctionNotWorking));
+    bot.action('setting', (ctx) => ctx.editMessageText(getTradingMessage(ctx), getBtnSetting(ctx)));
 }

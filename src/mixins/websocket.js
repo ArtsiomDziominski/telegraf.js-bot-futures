@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import {Telegraf} from "telegraf";
-import {TOKEN} from "../config/config.js";
+import {TOKEN} from "../../config/config.js";
 import UserStore from "../store/index.js";
 
 const bot = new Telegraf(TOKEN);

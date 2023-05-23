@@ -1,11 +1,13 @@
-import {BURL} from "../config/config.js";
+import {BURL} from "../../config/config.js";
 
 export const REQUEST_SERVER = {
     NewOrder: BURL + '/newOrder',
     CancelOpenOrder: BURL + '/cancelOpenOrder',
     GetWatchingList: BURL + '/getWatchingList',
     GetCurrentOrder: BURL + '/getCurrentOrder',
-    ClearWatchingList: BURL + '/cancelWatching'
+    ClearWatchingList: BURL + '/cancelWatching',
+    getNotification: BURL + '/getNotification',
+    setNotification: BURL + '/setNotification'
 }
 
 export const MESSAGE = {
