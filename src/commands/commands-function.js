@@ -1,8 +1,10 @@
 import UserStore from "../store/index.js";
 import {AXIOS_HEADER, MESSAGE, MESSAGE_CODE, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
-import {cancelOpenOrder, checkUser, sendAnswer} from "../mixins/helper.js";
+import {cancelOpenOrder, checkUser, parseButton, sendAnswer} from "../mixins/helper.js";
 import {getBtnTrading} from "../../buttons/inline-button.js";
+import {BUTTONS} from "../const/buttons.js";
+import {getMarketProfit, removeNameFiat} from "../../utils/utils.js";
 
 export function newOrder(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id; ////Исправить, добавить в checkUser(ctx)
@@ -24,8 +26,8 @@ export function newOrder(ctx) {
 }
 
 export async function getWatchingSymbols(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
     const messageDuplicate = ctx.update?.callback_query?.message?.text;
+    if (checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
     const response = await getWatchingListFromServer(ctx);
     const watchingList = response.data;
     watchingList.unshift('Наблюдаемые ордера:');
@@ -33,16 +35,27 @@ export async function getWatchingSymbols(ctx) {
     return !messageDuplicate ? ctx.reply(watchingListText) : messageDuplicate !== watchingListText ? ctx.editMessageText(watchingListText, getBtnTrading(ctx)) : ctx.answerCbQuery('Обнавлено');
 }
 
+export async function getProfit(ctx) {
+    const messageDuplicate = ctx.update?.callback_query?.message?.text + '\n';
+    if (checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
+    const currentOrders = await getCurrentOrders(ctx);
+    return !messageDuplicate
+        ? ctx.reply(currentOrders)
+        : messageDuplicate === currentOrders
+            ? ctx.answerCbQuery('Обнавлено')
+            : ctx.editMessageText(currentOrders, getBtnTrading(ctx));
+}
+
 export function getCurrentOrders(ctx) {
     if (checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetCurrentOrder)
         .then(r => {
-            let text = '';
+            let text = 'Профит:\n';
             const currentOrders = r?.data;
             UserStore.currentOrders = r.data;
             if (!currentOrders) return 'Список пуст';
             currentOrders
-                .forEach(order => text = text + `${order.unRealizedProfit > 0 ? '🟢' : '🔴'} ${order.symbol}: ${order.unRealizedProfit}\n`);
+                .forEach(order => text = text + `${getMarketProfit(order.unRealizedProfit)} ${order.symbol}: ${Number(order.unRealizedProfit).toFixed(2)}$       ${order.positionAmt} ${removeNameFiat(order.symbol)}\n`);
             return text
         })
 }
@@ -91,5 +104,15 @@ export function cancelWatching(ctx) {
 export function getWatchingListFromServer(ctx) {
     if (checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetWatchingList);
+}
+
+export async function toggleNotificationNewOrder(ctx) {
+    return {
+        inline_keyboard: parseButton(BUTTONS.notification),
+    };
+}
+
+export async function getNotifications() {
+    return 'Настройка уведомлений:'
 }
 

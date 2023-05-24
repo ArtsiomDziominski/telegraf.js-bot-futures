@@ -1,8 +1,9 @@
 import {Markup} from "telegraf";
 import axios from "axios";
-import {MESSAGE, REQUEST_SERVER} from "../src/const/const.js";
+import {REQUEST_SERVER} from "../src/const/const.js";
 import UserStore from "../src/store/index.js";
-import {checkUser} from "../src/mixins/helper.js";
+import {BUTTONS} from "../src/const/buttons.js";
+import {checkUser, parseButton} from "../src/mixins/helper.js";
 
 export const btnProfit = Markup.inlineKeyboard([
     Markup.button.callback('Market all', 'MarketAll'),
@@ -11,10 +12,22 @@ export const btnProfit = Markup.inlineKeyboard([
 
 export function getBtnTrading(ctx) {
     if (checkUser(ctx)) return Markup.inlineKeyboard({});
+    const btnNotification = parseButton(BUTTONS.trading);
+    return Markup.inlineKeyboard(btnNotification);
+}
+
+export function getBtnSetting(ctx) {
+    if (checkUser(ctx)) return Markup.inlineKeyboard({});
     return Markup.inlineKeyboard([
-        [Markup.button.callback('Наблюдаемые валюты', 'watching')],
+        [Markup.button.callback('Уведомление', 'notification-setting')],
         [Markup.button.callback('Назад', 'main-menu')]
     ]);
+}
+
+export function getBtnNotification(ctx) {
+    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+    const btnNotification = parseButton(BUTTONS.notification);
+    return Markup.inlineKeyboard(btnNotification);
 }
 
 export function getBtnMenu(ctx) {
@@ -59,3 +72,5 @@ export function btnCurrentOrder() {
     currentOrdersKeyboard.push({text: 'Закрыть', callback_data: 'closeKeyboard', hide: false});
     return Markup.inlineKeyboard(currentOrdersKeyboard);
 }
+
+

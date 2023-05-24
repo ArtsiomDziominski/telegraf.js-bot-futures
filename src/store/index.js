@@ -1,7 +1,8 @@
 class User {
-    isPassword = false;// password общий (если я ввожу, то другие могут пользоваться), нужно сделать индивидуальный
+    isPassword = false;
     currentOrders = {};
-    whitList = []
+    whitList = [];
+    notification = {};
 }
 
 export default new User();

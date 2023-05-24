@@ -1,11 +1,13 @@
-import {BURL} from "../config/config.js";
+import {BURL} from "../../config/config.js";
 
 export const REQUEST_SERVER = {
     NewOrder: BURL + '/newOrder',
     CancelOpenOrder: BURL + '/cancelOpenOrder',
     GetWatchingList: BURL + '/getWatchingList',
     GetCurrentOrder: BURL + '/getCurrentOrder',
-    ClearWatchingList: BURL + '/cancelWatching'
+    ClearWatchingList: BURL + '/cancelWatching',
+    getNotification: BURL + '/getNotification',
+    setNotification: BURL + '/setNotification'
 }
 
 export const MESSAGE = {
@@ -31,3 +33,8 @@ export const MAX_WARNING_PRICE = 5;
 export const AXIOS_HEADER = {
     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 };
+
+export const FIAT = {
+    USDT: 'USDT',
+    BUSDT: 'BUSDT'
+}

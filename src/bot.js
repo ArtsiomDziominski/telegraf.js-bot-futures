@@ -1,4 +1,4 @@
-import {TOKEN} from "./config/config.js";
+import {TOKEN} from "../config/config.js";
 import {Telegraf} from "telegraf";
 import {botCommandsStart} from "./commands/commands.js";
 import {webSocketStart} from "./mixins/websocket.js";

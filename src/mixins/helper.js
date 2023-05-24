@@ -1,5 +1,5 @@
-import {TOKEN} from "../config/config.js";
-import {Telegraf} from "telegraf";
+import {TOKEN} from "../../config/config.js";
+import {Markup, Telegraf} from "telegraf";
 import {AXIOS_HEADER, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
 import UserStore from "../store/index.js";
@@ -18,4 +18,10 @@ export async function cancelOpenOrder(symbol) {
 export function checkUser(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
     return !UserStore.whitList.includes(chatId);
+}
+
+export function parseButton(button) {
+    return  button.map(section => {
+        return section.map(btn => Markup.button.callback(btn.message, btn.action))
+    })
 }
