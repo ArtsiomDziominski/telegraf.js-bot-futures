@@ -6,11 +6,11 @@ import {MESSAGE} from "../const/const.js";
 import {
     btnCancelOrders,
     btnCurrentOrder,
-    btnProfit,
+    btnProfit, getBtnBackToActionTelegram,
     getBtnMenu, getBtnNotification,
     getBtnSetting,
-    getBtnTrading
-} from "../../buttons/inline-button.js";
+    getBtnTrading, getProfileBtn, getProfileTelegramBtn
+} from "../buttons/inline-button.js";
 import {
     cancelOrders, cancelWatching,
     getCurrentOrders,
@@ -20,13 +20,14 @@ import {
     setPassword,
     takeProfit, toggleNotificationNewOrder
 } from "./commands-function.js";
-import {buttonStart} from "../../buttons/button.js";
+import {buttonStart} from "../buttons/button.js";
 import {getTradingMessage} from "../mixins/get-message.js";
+import {getMessageActionTelegram, getMessageTelegramVisit} from "../message/message-profile.js";
 
 const bot = new Telegraf(TOKEN);
 
 export function botCommandsStart() {
-    bot.start((ctx) => ctx.reply(UserStore.whitList.includes(ctx.message.chat.id) ? MESSAGE.YouLogged : MESSAGE.Enter_password, buttonStart()));
+    bot.start((ctx) => ctx.reply((UserStore.whitList.findIndex(user => user.id === ctx.message.chat.id) >= 0) ? MESSAGE.YouLogged : MESSAGE.Enter_password, buttonStart()));
     bot.help((ctx) => ctx.reply('Send me a sticker'));
     bot.on(message('sticker'), (ctx) => ctx.reply('👍'));
     botCommands();
@@ -61,6 +62,8 @@ function botAction() {
 
     bot.action('closeKeyboard', (ctx) => ctx.editMessageReplyMarkup({}));
 
+
+
     bot.action('main-menu', (ctx) => ctx.editMessageText('Меню:', getBtnMenu(ctx)));
     bot.action('notification-setting', async (ctx) => ctx.editMessageText(await getNotifications(), await getBtnNotification(ctx)));
     // bot.action('notification-new-order', (ctx) => ctx.editMessageText(toggleNotificationNewOrder(), getBtnNotification(ctx)));
@@ -77,6 +80,18 @@ function userMessage() {
 
 function botActionMenu() {
     bot.action('trading', (ctx) => ctx.editMessageText(getTradingMessage(ctx), getBtnTrading(ctx)));
-    bot.action('profile', (ctx) => ctx.answerCbQuery(MESSAGE.FunctionNotWorking));
+    bot.action('profile', (ctx) => ctx.editMessageText('Профиль', getProfileBtn(ctx)));
     bot.action('setting', (ctx) => ctx.editMessageText(getTradingMessage(ctx), getBtnSetting(ctx)));
+    botActionMenuProfile();
+}
+
+function botActionMenuProfile() {
+    bot.action('action-telegram', (ctx) => ctx.editMessageText(getMessageActionTelegram(), getProfileTelegramBtn(ctx)));
+    botActionMenuProfileTelegram();
+}
+
+function botActionMenuProfileTelegram() {
+    bot.action('profile-telegram-visit', (ctx) => ctx.answerCbQuery(MESSAGE.FunctionNotWorking));
+    bot.action('profile-telegram-login', (ctx) => getMessageTelegramVisit(ctx));
+    bot.action('profile-telegram-login', (ctx) => ctx.answerCbQuery(MESSAGE.FunctionNotWorking));
 }

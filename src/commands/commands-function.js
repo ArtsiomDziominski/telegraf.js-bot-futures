@@ -2,7 +2,7 @@ import UserStore from "../store/index.js";
 import {AXIOS_HEADER, MESSAGE, MESSAGE_CODE, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
 import {cancelOpenOrder, checkUser, parseButton, sendAnswer} from "../mixins/helper.js";
-import {getBtnTrading} from "../../buttons/inline-button.js";
+import {getBtnTrading} from "../buttons/inline-button.js";
 import {BUTTONS} from "../const/buttons.js";
 import {getMarketProfit, removeNameFiat} from "../../utils/utils.js";
 
@@ -61,8 +61,14 @@ export function getCurrentOrders(ctx) {
 }
 
 export function setPassword(ctx) {
-    const chatId = ctx.message.chat.id;
-    UserStore.whitList.push(chatId);
+    const chat = ctx.message.chat;
+    const message = ctx.message;
+    const idIndex = UserStore.whitList.findIndex(user => user.id === chat.id);
+    if (idIndex >= 0) {
+        return MESSAGE.loggedIn;
+    } else {
+        UserStore.whitList.push({...chat, date: Date.now()});
+    }
     return MESSAGE.AfterInputPassword;
 }
 
@@ -91,7 +97,7 @@ export function getMessageCancelOpenOrder(ctx) {
 export function logoutUser(ctx) {
     if (checkUser(ctx)) return '❌⛔️ Сначала нужно войти в аккаунт ⛔️❌';
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
-    UserStore.whitList = UserStore.whitList.filter(chatIdUser => chatIdUser !== chatId);
+    UserStore.whitList = UserStore.whitList.filter(user => user.id !== chatId);
     return 'Мы без тебя to the moon 🚀\nВы вышли!'
 }
 

@@ -15,7 +15,7 @@ export function webSocketStart() {
     });
 
     ws.on('message', function message(data) {
-        UserStore.whitList.forEach(chat_id => bot.telegram.sendMessage(chat_id, data ? data.toString() : 'Неведомая ошибка WS'))
+        UserStore.whitList.forEach(user => bot.telegram.sendMessage(user.id, data ? data.toString() : 'Неведомая ошибка WS'))
     });
     return ws;
 }
