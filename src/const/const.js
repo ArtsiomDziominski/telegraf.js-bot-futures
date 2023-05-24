@@ -33,3 +33,8 @@ export const MAX_WARNING_PRICE = 5;
 export const AXIOS_HEADER = {
     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 };
+
+export const FIAT = {
+    USDT: 'USDT',
+    BUSDT: 'BUSDT'
+}

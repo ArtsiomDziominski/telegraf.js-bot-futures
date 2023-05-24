@@ -72,3 +72,5 @@ export function btnCurrentOrder() {
     currentOrdersKeyboard.push({text: 'Закрыть', callback_data: 'closeKeyboard', hide: false});
     return Markup.inlineKeyboard(currentOrdersKeyboard);
 }
+
+

@@ -2,10 +2,9 @@ import UserStore from "../store/index.js";
 import {AXIOS_HEADER, MESSAGE, MESSAGE_CODE, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
 import {cancelOpenOrder, checkUser, parseButton, sendAnswer} from "../mixins/helper.js";
-import {getBtnNotification, getBtnTrading} from "../../buttons/inline-button.js";
-import Notification from "../store/notification.js";
-import {Markup} from "telegraf";
+import {getBtnTrading} from "../../buttons/inline-button.js";
 import {BUTTONS} from "../const/buttons.js";
+import {getMarketProfit, removeNameFiat} from "../../utils/utils.js";
 
 export function newOrder(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id; ////Исправить, добавить в checkUser(ctx)
@@ -56,7 +55,7 @@ export function getCurrentOrders(ctx) {
             UserStore.currentOrders = r.data;
             if (!currentOrders) return 'Список пуст';
             currentOrders
-                .forEach(order => text = text + `${Number(order.unRealizedProfit).toFixed(2) > 0 ? '🟢' : '🔴'} ${order.symbol}: ${Number(order.unRealizedProfit).toFixed(2)}$\n`);
+                .forEach(order => text = text + `${getMarketProfit(order.unRealizedProfit)} ${order.symbol}: ${Number(order.unRealizedProfit).toFixed(2)}$       ${order.positionAmt} ${removeNameFiat(order.symbol)}\n`);
             return text
         })
 }
