@@ -22,7 +22,6 @@ export function webSocketStart() {
     ws.on('message', async function message(data) {
         const responseUsers = await axios.get(DB_URL + '/users');
         UserStore.whitList = responseUsers.data;
-        console.log(data.toString())
         UserStore.whitList.forEach(user => bot.telegram.sendMessage(user.id, data ? data.toString() : 'Неведомая ошибка WS'))
     });
 

@@ -6,10 +6,16 @@ import {MESSAGE} from "../const/const.js";
 import {
     btnCancelOrders,
     btnCurrentOrder,
-    btnProfit, getBtnBackToActionTelegram,
-    getBtnMenu, getBtnNotification,
+    btnProfit,
+    getBtnBackToActionTelegram,
+    getBtnMenu,
+    getBtnNotification,
     getBtnSetting,
-    getBtnTrading, getProfileBtn, getProfileTelegramBtn, getSettingTrading, getSettingTradingStep
+    getBtnTrading,
+    getProfileBtn,
+    getProfileTelegramBtn,
+    getSettingTrading,
+    getSettingTradingSellOrderPercent, getSettingTradingStep,
 } from "../buttons/inline-button.js";
 import {
     cancelOrders, cancelWatching,
@@ -23,12 +29,12 @@ import {
 import {buttonStart} from "../buttons/button.js";
 import {getStartMessage, getTradingMessage} from "../mixins/get-message.js";
 import {
-    getMessageActionTelegram, getMessageSetting,
+    getMessageActionTelegram, getMessageSellOrderPercent, getMessageSetting,
     getMessageStepSellOrder,
     getMessageTelegramVisit
 } from "../message/message-profile.js";
-import {getBtnSettingTradingStep} from "../const/buttons.js";
-import {setStepSellOrder, settingTradingStep} from "../components/setting-trading.js";
+import {getBtnSettingTradingSellOrderPercent, getBtnSettingTradingStep} from "../const/buttons.js";
+import {setStepSellOrder, settingTradingSellOrderPercent, settingTradingStep} from "../components/setting-trading.js";
 
 const bot = new Telegraf(TOKEN);
 
@@ -115,16 +121,28 @@ function botActionSetting() {
     bot.action('notification-trading', async (ctx) => ctx.editMessageText(getMessageSetting(ctx), await getSettingTrading(ctx)));
 }
 
+function botActionSettingTrading() {
+    bot.action('step-sell-order', async (ctx) => ctx.editMessageText(await getMessageStepSellOrder(ctx), await getSettingTradingStep(ctx)));
+    bot.action('sell-order-percent', async (ctx) => ctx.editMessageText(await getMessageSellOrderPercent(ctx), await getSettingTradingSellOrderPercent(ctx)));
+    botActionSettingTradingStepSellOrder();
+    botActionSettingTradingSellOrderPercent();
+}
+
+function botActionSettingTradingSellOrderPercent() {
+    bot.action('setting-trading-SellOrderPercent-5', async (ctx) => settingTradingSellOrderPercent(ctx, 5));
+    bot.action('setting-trading-SellOrderPercent-10', async (ctx) => settingTradingSellOrderPercent(ctx, 10));
+    bot.action('setting-trading-SellOrderPercent-15', async (ctx) => settingTradingSellOrderPercent(ctx, 15));
+    bot.action('setting-trading-SellOrderPercent-20', async (ctx) => settingTradingSellOrderPercent(ctx, 20));
+    bot.action('setting-trading-SellOrderPercent-25', async (ctx) => settingTradingSellOrderPercent(ctx, 25));
+    bot.action('setting-trading-SellOrderPercent-30', async (ctx) => settingTradingSellOrderPercent(ctx, 30));
+    bot.action('setting-trading-SellOrderPercent-0', async (ctx) => settingTradingSellOrderPercent(ctx, 0));
+}
+
 function botActionSettingTradingStepSellOrder() {
     bot.action('setting-trading-setStepSellOrder-0', async (ctx) => settingTradingStep(ctx, 0));
     bot.action('setting-trading-setStepSellOrder-2', async (ctx) => settingTradingStep(ctx, 2));
     bot.action('setting-trading-setStepSellOrder-3', async (ctx) => settingTradingStep(ctx, 3));
     bot.action('setting-trading-setStepSellOrder-4', async (ctx) => settingTradingStep(ctx, 4));
     bot.action('setting-trading-setStepSellOrder-5', async (ctx) => settingTradingStep(ctx, 5));
-}
-
-function botActionSettingTrading() {
-    bot.action('step-sell-order', async (ctx) => ctx.editMessageText(await getMessageStepSellOrder(ctx), await getSettingTradingStep(ctx)));
-    botActionSettingTradingStepSellOrder();
 }
 

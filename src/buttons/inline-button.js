@@ -2,7 +2,12 @@ import {Markup} from "telegraf";
 import axios from "axios";
 import {MESSAGE, REQUEST_SERVER} from "../const/const.js";
 import UserStore from "../store/index.js";
-import {BUTTONS, getBtnSettingTradingStep, getNotificationsBtn} from "../const/buttons.js";
+import {
+    BUTTONS,
+    getBtnSettingTradingSellOrderPercent,
+    getBtnSettingTradingStep,
+    getNotificationsBtn
+} from "../const/buttons.js";
 import {checkUser, parseButton} from "../mixins/helper.js";
 
 export const btnProfit = Markup.inlineKeyboard([
@@ -103,6 +108,12 @@ export async function getSettingTrading(ctx) {
 export async function getSettingTradingStep(ctx) {
     if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(getBtnSettingTradingStep());
+    return Markup.inlineKeyboard(btnProfile);
+}
+
+export async function getSettingTradingSellOrderPercent(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    const btnProfile = parseButton(getBtnSettingTradingSellOrderPercent());
     return Markup.inlineKeyboard(btnProfile);
 }
 

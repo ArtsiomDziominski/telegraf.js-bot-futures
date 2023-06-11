@@ -6,7 +6,11 @@ import {webSocketStart} from "./mixins/websocket.js";
 const bot = new Telegraf(TOKEN);
 export const ws = webSocketStart();
 
-botCommandsStart();
+try {
+    botCommandsStart();
+} catch (e) {
+    console.log('Ошибка')
+}
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));

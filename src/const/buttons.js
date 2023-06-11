@@ -60,6 +60,10 @@ export const BUTTONS = {
             {
                 message: 'Ордер продажи',
                 action: 'step-sell-order'
+            },
+            {
+                message: '% ордер продажи',
+                action: 'sell-order-percent'
             }
         ],
         [{
@@ -112,6 +116,47 @@ export function getBtnSettingTradingStep() {
             {
                 message: (User.settingTrading.stepSellOrder < 2 ? '✅ Отключено' : 'Отключить'),
                 action: 'setting-trading-setStepSellOrder-0'
+            },
+            {
+                message: 'Назад',
+                action: 'main-menu'
+            }
+        ]
+    ]
+}
+
+export function getBtnSettingTradingSellOrderPercent() {
+    return [
+        [
+            {
+                message: (User.settingTrading.sellOrderPercent === 5 ? '✅ ' : '') + '5',
+                action: 'setting-trading-SellOrderPercent-5'
+            },
+            {
+                message: (User.settingTrading.sellOrderPercent === 10 ? '✅ ' : '') + '10',
+                action: 'setting-trading-SellOrderPercent-10'
+            },
+            {
+                message: (User.settingTrading.sellOrderPercent === 15 ? '✅ ' : '') + '15',
+                action: 'setting-trading-SellOrderPercent-15'
+            },
+            {
+                message: (User.settingTrading.sellOrderPercent === 20 ? '✅ ' : '') + '20',
+                action: 'setting-trading-SellOrderPercent-20'
+            }
+        ],
+        [
+            {
+                message: (User.settingTrading.sellOrderPercent === 25 ? '✅ ' : '') + '25',
+                action: 'setting-trading-SellOrderPercent-25'
+            },
+            {
+                message: (User.settingTrading.sellOrderPercent === 30 ? '✅ ' : '') + '30',
+                action: 'setting-trading-SellOrderPercent-30'
+            },
+            {
+                message: (User.settingTrading.sellOrderPercent < 2 ? '✅ Отключено' : 'Отключить'),
+                action: 'setting-trading-SellOrderPercent-0'
             },
             {
                 message: 'Назад',
