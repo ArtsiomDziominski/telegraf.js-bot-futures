@@ -25,6 +25,11 @@ export async function getMessageStepSellOrder() {
     return `Шаг ордера на продажу: ${User.settingTrading.stepSellOrder}`;
 }
 
+export async function getMessageSellOrderPercent() {
+    User.settingTrading = (await axios.get(REQUEST_DB.settingTrading)).data;
+    return `Как сработает ордер, бот автоматически выставит ордер на продажу с процентом`;
+}
+
 export function getMessageSetting() {
     return 'Настройки торговли:'
 }

@@ -8,7 +8,7 @@ class User {
     notifications = {
         infoNewOrder: false
     };
-    settingTrading = {stepSellOrder: 0}
+    settingTrading = {stepSellOrder: 0, sellOrderPercent: 0}
 }
 
 export default new User();
