@@ -1,7 +1,7 @@
 import axios from "axios";
-import {REQUEST_DB} from "../const/const.js";
+import {MESSAGE, REQUEST_DB} from "../const/const.js";
 import UserStore from "../store/index.js";
-import {getMessage} from "../mixins/helper.js";
+import {checkUser, getMessage} from "../mixins/helper.js";
 import {getSettingTradingSellOrderPercent, getSettingTradingStep} from "../buttons/inline-button.js";
 
 async function setSettingTradingToUserStore() {
@@ -29,11 +29,9 @@ async function setStepSellOrderPercent(sellOrderPercent) {
 }
 
 export async function settingTradingStep(ctx, step) {
-
-    return getMessage(ctx, await setStepSellOrder(step), await getSettingTradingStep(ctx));
+    return await checkUser(ctx) ? getMessage(ctx, await setStepSellOrder(step), await getSettingTradingStep(ctx)) : ctx.reply(MESSAGE.NoPassword);
 }
 
 export async function settingTradingSellOrderPercent(ctx, step) {
-
-    return getMessage(ctx, await setStepSellOrderPercent(step), await getSettingTradingSellOrderPercent(ctx));
+    return await checkUser(ctx) ? getMessage(ctx, await setStepSellOrderPercent(step), await getSettingTradingSellOrderPercent(ctx)) : ctx.reply(MESSAGE.NoPassword);
 }

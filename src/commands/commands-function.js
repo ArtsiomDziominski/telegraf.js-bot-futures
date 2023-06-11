@@ -10,7 +10,7 @@ import {buttonNewOrder} from "../buttons/button.js";
 
 export async function newOrder(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id; ////Исправить, добавить в checkUser(ctx)
-    if (await checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
+    if (!(await checkUser(ctx))) return ctx.reply(MESSAGE.NoPassword);
     const message = ctx.message.text;
     const messageNewOrder = message.split(' ');
     if (messageNewOrder.length !== 7) return ctx.reply(MESSAGE.NotAllParametersEntered, await buttonNewOrder(ctx));
@@ -28,12 +28,12 @@ export async function newOrder(ctx) {
 }
 
 export async function stopWatchingSymbols(ctx) {
-    return getMessage(ctx, await cancelWatching(ctx), await getBtnTrading(ctx))
+    return await checkUser(ctx) ? getMessage(ctx, await cancelWatching(ctx), await getBtnTrading(ctx)) : ctx.reply(MESSAGE.NoPassword);
 }
 
 export async function getWatchingSymbols(ctx) {
     const messageDuplicate = ctx.update?.callback_query?.message?.text;
-    if (await checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
+    if (!(await checkUser(ctx))) return ctx.reply(MESSAGE.NoPassword);
     const response = await getWatchingListFromServer(ctx);
     const watchingList = response.data;
     watchingList.unshift('Наблюдаемые ордера:');
@@ -43,7 +43,7 @@ export async function getWatchingSymbols(ctx) {
 
 export async function getProfit(ctx) {
     const messageDuplicate = ctx.update?.callback_query?.message?.text + '\n';
-    if (await checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
+    if (!(await checkUser(ctx))) return ctx.reply(MESSAGE.NoPassword);
     const currentOrders = await getCurrentOrders(ctx);
     return !messageDuplicate
         ? ctx.reply(currentOrders)
@@ -53,7 +53,6 @@ export async function getProfit(ctx) {
 }
 
 export async function getCurrentOrders(ctx) {
-    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetCurrentOrder)
         .then(r => {
             let text = 'Профит:\n';
@@ -82,7 +81,7 @@ export async function setPassword(ctx) {
 }
 
 export async function takeProfit(ctx) {
-    if (await checkUser(ctx)) return MESSAGE.NoPassword;
+    if (!(await checkUser(ctx))) return MESSAGE.NoPassword;
     const symbolForCancel = ctx.update.callback_query.message.reply_markup.inline_keyboard[0][0].text;
     ctx.editMessageReplyMarkup({})
 
@@ -90,7 +89,7 @@ export async function takeProfit(ctx) {
 }
 
 export async function cancelOrders(ctx) {
-    if (await checkUser(ctx)) return MESSAGE.NoPassword;
+    if (!(await checkUser(ctx))) return MESSAGE.NoPassword;
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
     const symbolForCancel = ctx.update.callback_query.message.reply_markup.inline_keyboard[0][0].text;
     ctx.editMessageReplyMarkup({})
@@ -99,12 +98,11 @@ export async function cancelOrders(ctx) {
 }
 
 export async function getMessageCancelOpenOrder(ctx) {
-    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     return MESSAGE.CancelOpenOrder;
 }
 
 export async function logoutUser(ctx) {
-    if (await checkUser(ctx)) return '❌⛔️ Сначала нужно войти в аккаунт ⛔️❌';
+    if (!(await checkUser(ctx))) return '❌⛔️ Для начало нужно войти в аккаунт ⛔️❌';
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
     const resUsers = await axios.get(REQUEST_DB.users);
     UserStore.whitList = resUsers.data;
@@ -113,13 +111,13 @@ export async function logoutUser(ctx) {
 }
 
 export async function cancelWatching(ctx) {
-    if (await checkUser(ctx)) return MESSAGE.NoPassword;
+    if (!(await checkUser(ctx))) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.ClearWatchingList)
         .then(r => r.data)
 }
 
 export async function getWatchingListFromServer(ctx) {
-    if (await checkUser(ctx)) return MESSAGE.NoPassword;
+    if (!(await checkUser(ctx))) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetWatchingList);
 }
 
@@ -130,7 +128,6 @@ export async function toggleNotificationNewOrder(ctx) {
 }
 
 export async function getNotifications() {
-    UserStore.notifications = (await axios.get(REQUEST_DB.notifications)).data
     return 'Настройка уведомлений:'
 }
 
