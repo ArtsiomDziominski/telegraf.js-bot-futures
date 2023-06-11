@@ -1,4 +1,4 @@
-import {BURL} from "../../config/config.js";
+import {BURL, DB_URL} from "../../config/config.js";
 
 export const REQUEST_SERVER = {
     NewOrder: BURL + '/newOrder',
@@ -10,13 +10,21 @@ export const REQUEST_SERVER = {
     setNotification: BURL + '/setNotification'
 }
 
+export const REQUEST_DB = {
+    watchingSymbols: '/watchingSymbols/mainSymbolsList',
+    orderParams: '/orderParams',
+    notifications: DB_URL + '/notifications',
+    users: DB_URL + '/users',
+    settingTrading: DB_URL + '/settingTrading'
+}
+
 export const MESSAGE = {
     WatchingListEmpty : 'Наблюдаемый список пуст',
     FunctionNotWorking : `Функция в данный момент не работает`,
     YouLogged : 'Вы в системе',
     Enter_password : '❌ Доступ запрещен, введите пароль ❌',
     AfterInputPassword: '🤑 Добро пожаловать в богатство 💵',
-    NotAllParametersEntered: 'Не все параметры введены',
+    NotAllParametersEntered: 'Выберите из списка ⤵️',
     Error: 'Что-то пошло не так',
     SendNewOrder: `Отправлен новый ордер`,
     CancelOpenOrder: 'Выберите ордер в ожидании, который хотите отменить:',
@@ -39,3 +47,4 @@ export const FIAT = {
     USDT: 'USDT',
     BUSDT: 'BUSDT'
 }
+
