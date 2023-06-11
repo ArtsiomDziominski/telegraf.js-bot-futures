@@ -1,4 +1,4 @@
-import {TOKEN} from "../../config/config.js";
+import {DB_URL, TOKEN} from "../../config/config.js";
 import {Markup, Telegraf} from "telegraf";
 import {AXIOS_HEADER, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
@@ -16,9 +16,11 @@ export async function cancelOpenOrder(symbol) {
     return await axios.post(REQUEST_SERVER.CancelOpenOrder, params, AXIOS_HEADER);
 }
 
-export function checkUser(ctx) {
+export async function checkUser(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
-    return !(UserStore.whitList.findIndex(user => user.id === chatId) >= 0);
+    const whitListUsers = await axios.get(DB_URL + '/users');
+    const idIndex = whitListUsers.data.findIndex(user => user.id === chatId);
+    return idIndex < 0;
 }
 
 export function parseButton(button) {
@@ -27,13 +29,13 @@ export function parseButton(button) {
     })
 }
 
-export function getMessage(ctx, message, inlineButton) {
+export async function getMessage(ctx, message, inlineButton) {
     const messageDuplicate = ctx.update?.callback_query?.message?.text;
     return !messageDuplicate
         ? ctx.reply(message)
         : messageDuplicate === message
             ? ctx.answerCbQuery('Обнавлено')
-            : ctx.editMessageText(message, inlineButton);
+            : ctx.editMessageText(message, await inlineButton);
 }
 
 

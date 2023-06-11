@@ -1,8 +1,8 @@
 import {Markup} from "telegraf";
 import axios from "axios";
-import {REQUEST_SERVER} from "../const/const.js";
+import {MESSAGE, REQUEST_SERVER} from "../const/const.js";
 import UserStore from "../store/index.js";
-import {BUTTONS} from "../const/buttons.js";
+import {BUTTONS, getBtnSettingTradingStep, getNotificationsBtn} from "../const/buttons.js";
 import {checkUser, parseButton} from "../mixins/helper.js";
 
 export const btnProfit = Markup.inlineKeyboard([
@@ -10,28 +10,31 @@ export const btnProfit = Markup.inlineKeyboard([
     Markup.button.callback('Закрыть', 'closeKeyboard')
 ])
 
-export function getBtnTrading(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+export async function getBtnTrading(ctx) {
+    if (await checkUser(ctx)) return {};
     const btnNotification = parseButton(BUTTONS.trading);
     return Markup.inlineKeyboard(btnNotification);
 }
 
-export function getBtnSetting(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+export async function getBtnSetting(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     return Markup.inlineKeyboard([
-        [Markup.button.callback('Уведомление', 'notification-setting')],
+        [
+            Markup.button.callback('Торговля', 'notification-trading'),
+            Markup.button.callback('Уведомление', 'notification-setting')
+        ],
         [Markup.button.callback('Назад', 'main-menu')]
     ]);
 }
 
-export function getBtnNotification(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
-    const btnNotification = parseButton(BUTTONS.notification);
+export async function getBtnNotification(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    const btnNotification = await parseButton(getNotificationsBtn());
     return Markup.inlineKeyboard(btnNotification);
 }
 
-export function getBtnMenu(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+export async function getBtnMenu(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     return Markup.inlineKeyboard(
         [[
             Markup.button.callback('💵 Торговля', 'trading'),
@@ -73,21 +76,33 @@ export function btnCurrentOrder() {
     return Markup.inlineKeyboard(currentOrdersKeyboard);
 }
 
-export function getProfileBtn(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+export async function getProfileBtn(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.profile);
     return Markup.inlineKeyboard(btnProfile);
 }
 
-export function getProfileTelegramBtn(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+export async function getProfileTelegramBtn(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.profileTelegram);
     return Markup.inlineKeyboard(btnProfile);
 }
 
-export function getBtnBackToActionTelegram(ctx) {
-    if (checkUser(ctx)) return Markup.inlineKeyboard({});
+export async function getBtnBackToActionTelegram(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.backToActionTelegram);
+    return Markup.inlineKeyboard(btnProfile);
+}
+
+export async function getSettingTrading(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    const btnProfile = parseButton(BUTTONS.settingTrading);
+    return Markup.inlineKeyboard(btnProfile);
+}
+
+export async function getSettingTradingStep(ctx) {
+    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    const btnProfile = parseButton(getBtnSettingTradingStep());
     return Markup.inlineKeyboard(btnProfile);
 }
 

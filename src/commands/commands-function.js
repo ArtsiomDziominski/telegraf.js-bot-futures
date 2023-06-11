@@ -1,17 +1,19 @@
 import UserStore from "../store/index.js";
-import {AXIOS_HEADER, MESSAGE, MESSAGE_CODE, REQUEST_SERVER} from "../const/const.js";
+import {AXIOS_HEADER, REQUEST_DB, MESSAGE, MESSAGE_CODE, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
-import {cancelOpenOrder, checkUser, parseButton, sendAnswer} from "../mixins/helper.js";
-import {getBtnTrading} from "../buttons/inline-button.js";
+import {cancelOpenOrder, checkUser, getMessage, parseButton, sendAnswer} from "../mixins/helper.js";
+import {getBtnNotification, getBtnTrading} from "../buttons/inline-button.js";
 import {BUTTONS} from "../const/buttons.js";
-import {getMarketProfit, removeNameFiat} from "../../utils/utils.js";
+import {getMarketProfit, removeNameFiat} from "../utils/utils.js";
+import {DB_URL} from "../../config/config.js";
+import {buttonNewOrder} from "../buttons/button.js";
 
-export function newOrder(ctx) {
+export async function newOrder(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id; ////Исправить, добавить в checkUser(ctx)
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+    if (await checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
     const message = ctx.message.text;
     const messageNewOrder = message.split(' ');
-    if (messageNewOrder.length !== 7) return MESSAGE.NotAllParametersEntered;
+    if (messageNewOrder.length !== 7) return ctx.reply(MESSAGE.NotAllParametersEntered, await buttonNewOrder(ctx));
     const newOrderParams = {
         symbol: messageNewOrder[1],
         quantity: messageNewOrder[2],
@@ -22,32 +24,36 @@ export function newOrder(ctx) {
     }
     axios.post(REQUEST_SERVER.NewOrder, newOrderParams, AXIOS_HEADER)
         .then(r => sendAnswer(chatId, r.status === MESSAGE_CODE.Success ? r.data : MESSAGE.Error));
-    return MESSAGE.SendNewOrder;
+    return ctx.reply(MESSAGE.SendNewOrder);
+}
+
+export async function stopWatchingSymbols(ctx) {
+    return getMessage(ctx, await cancelWatching(ctx), await getBtnTrading(ctx))
 }
 
 export async function getWatchingSymbols(ctx) {
     const messageDuplicate = ctx.update?.callback_query?.message?.text;
-    if (checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
+    if (await checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
     const response = await getWatchingListFromServer(ctx);
     const watchingList = response.data;
     watchingList.unshift('Наблюдаемые ордера:');
     const watchingListText = watchingList.join('\n');
-    return !messageDuplicate ? ctx.reply(watchingListText) : messageDuplicate !== watchingListText ? ctx.editMessageText(watchingListText, getBtnTrading(ctx)) : ctx.answerCbQuery('Обнавлено');
+    return !messageDuplicate ? ctx.reply(watchingListText) : messageDuplicate !== watchingListText ? ctx.editMessageText(watchingListText, await getBtnTrading(ctx)) : ctx.answerCbQuery('Обнавлено');
 }
 
 export async function getProfit(ctx) {
     const messageDuplicate = ctx.update?.callback_query?.message?.text + '\n';
-    if (checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
+    if (await checkUser(ctx)) return ctx.reply(MESSAGE.NoPassword);
     const currentOrders = await getCurrentOrders(ctx);
     return !messageDuplicate
         ? ctx.reply(currentOrders)
         : messageDuplicate === currentOrders
             ? ctx.answerCbQuery('Обнавлено')
-            : ctx.editMessageText(currentOrders, getBtnTrading(ctx));
+            : ctx.editMessageText(currentOrders, await getBtnTrading(ctx));
 }
 
-export function getCurrentOrders(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+export async function getCurrentOrders(ctx) {
+    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetCurrentOrder)
         .then(r => {
             let text = 'Профит:\n';
@@ -58,30 +64,33 @@ export function getCurrentOrders(ctx) {
                 .forEach(order => text = text + `${getMarketProfit(order.unRealizedProfit)} ${order.symbol}: ${Number(order.unRealizedProfit).toFixed(2)}$       ${order.positionAmt} ${removeNameFiat(order.symbol)}\n`);
             return text
         })
+        .catch(reason => 'Что-то пошло не так...')
 }
 
-export function setPassword(ctx) {
+export async function setPassword(ctx) {
     const chat = ctx.message.chat;
     const message = ctx.message;
-    const idIndex = UserStore.whitList.findIndex(user => user.id === chat.id);
+    const whitListUsers = await axios.get(DB_URL + '/users');
+    const idIndex = whitListUsers.data.findIndex(user => user.id === chat.id);
     if (idIndex >= 0) {
         return MESSAGE.loggedIn;
     } else {
-        UserStore.whitList.push({...chat, date: Date.now()});
+        await axios.post(DB_URL + '/users', {...chat, dateLogin: Date.now()})
     }
+
     return MESSAGE.AfterInputPassword;
 }
 
-export function takeProfit(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+export async function takeProfit(ctx) {
+    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     const symbolForCancel = ctx.update.callback_query.message.reply_markup.inline_keyboard[0][0].text;
     ctx.editMessageReplyMarkup({})
 
     return ctx.answerCbQuery(`В данный момент функция не работает`);
 }
 
-export function cancelOrders(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+export async function cancelOrders(ctx) {
+    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
     const symbolForCancel = ctx.update.callback_query.message.reply_markup.inline_keyboard[0][0].text;
     ctx.editMessageReplyMarkup({})
@@ -89,26 +98,28 @@ export function cancelOrders(ctx) {
     return ctx.answerCbQuery(`Отмена ордера ${symbolForCancel}`);
 }
 
-export function getMessageCancelOpenOrder(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+export async function getMessageCancelOpenOrder(ctx) {
+    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     return MESSAGE.CancelOpenOrder;
 }
 
-export function logoutUser(ctx) {
-    if (checkUser(ctx)) return '❌⛔️ Сначала нужно войти в аккаунт ⛔️❌';
+export async function logoutUser(ctx) {
+    if (await checkUser(ctx)) return '❌⛔️ Сначала нужно войти в аккаунт ⛔️❌';
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
-    UserStore.whitList = UserStore.whitList.filter(user => user.id !== chatId);
+    const resUsers = await axios.get(REQUEST_DB.users);
+    UserStore.whitList = resUsers.data;
+    await axios.delete(`${REQUEST_DB.users}/${chatId}`);
     return 'Мы без тебя to the moon 🚀\nВы вышли!'
 }
 
-export function cancelWatching(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+export async function cancelWatching(ctx) {
+    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.ClearWatchingList)
         .then(r => r.data)
 }
 
-export function getWatchingListFromServer(ctx) {
-    if (checkUser(ctx)) return MESSAGE.NoPassword;
+export async function getWatchingListFromServer(ctx) {
+    if (await checkUser(ctx)) return MESSAGE.NoPassword;
     return axios.get(REQUEST_SERVER.GetWatchingList);
 }
 
@@ -119,6 +130,16 @@ export async function toggleNotificationNewOrder(ctx) {
 }
 
 export async function getNotifications() {
+    UserStore.notifications = (await axios.get(REQUEST_DB.notifications)).data
     return 'Настройка уведомлений:'
+}
+
+export async function setNotificationNewOrder(ctx) {
+    const response = await axios.get(REQUEST_DB.notifications);
+    UserStore.notifications = response.data;
+    UserStore.notifications.infoNewOrder = !UserStore.notifications.infoNewOrder;
+    await axios.patch(REQUEST_DB.notifications, UserStore.notifications);
+    const message = 'Иноформация о выставления ордеров: ' + UserStore.notifications.infoNewOrder;
+    return getMessage(ctx, message, await getBtnNotification(ctx));
 }
 

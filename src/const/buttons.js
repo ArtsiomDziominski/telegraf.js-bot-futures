@@ -1,18 +1,14 @@
 import UserStore from "../store/index.js";
+import User from "../store/index.js";
 
 export const BUTTONS = {
-    notification: [
-        [{
-            message: UserStore.notification.newOrderAuto ? '✅ Выставление новых ордеров' : 'Выставление новых ордеров',
-            action: 'notification-new-order'
-        }],
-        [{
-            message: 'Назад',
-            action: 'main-menu'
-        }]
-    ],
+    notification: [],
     trading: [
         [
+            {
+                message: 'Новый одер',
+                action: 'trading-newOrder'
+            },
             {
                 message: 'Наблюдаемые валюты',
                 action: 'watching'
@@ -22,6 +18,10 @@ export const BUTTONS = {
                 action: 'profit'
             }
         ],
+        [{
+            message: 'Остановить бота',
+            action: 'trading-stopBot'
+        }],
         [{
             message: 'Назад',
             action: 'main-menu'
@@ -55,10 +55,68 @@ export const BUTTONS = {
             action: 'main-menu'
         }]
     ],
+    settingTrading: [
+        [
+            {
+                message: 'Ордер продажи',
+                action: 'step-sell-order'
+            }
+        ],
+        [{
+            message: 'Назад',
+            action: 'main-menu'
+        }]
+    ],
     backToActionTelegram: [
         [{
             message: 'Назад',
             action: 'action-telegram'
         }]
+    ]
+}
+
+export function getNotificationsBtn() {
+    return [
+        [{
+            message: (UserStore.notifications.infoNewOrder ? '✅ ' : '') + 'Закрытие позиции',
+            action: 'notification-new-order'
+        }],
+        [{
+            message: 'Назад',
+            action: 'main-menu'
+        }]
+    ]
+}
+
+export function getBtnSettingTradingStep() {
+    return [
+        [
+            {
+                message: (User.settingTrading.stepSellOrder === 2 ? '✅ ' : '') + '2',
+                action: 'setting-trading-setStepSellOrder-2'
+            },
+            {
+                message: (User.settingTrading.stepSellOrder === 3 ? '✅ ' : '') + '3',
+                action: 'setting-trading-setStepSellOrder-3'
+            },
+            {
+                message: (User.settingTrading.stepSellOrder === 4 ? '✅ ' : '') + '4',
+                action: 'setting-trading-setStepSellOrder-4'
+            },
+            {
+                message: (User.settingTrading.stepSellOrder === 5 ? '✅ ' : '') + '5',
+                action: 'setting-trading-setStepSellOrder-5'
+            }
+        ],
+        [
+            {
+                message: (User.settingTrading.stepSellOrder < 2 ? '✅ Отключено' : 'Отключить'),
+                action: 'setting-trading-setStepSellOrder-0'
+            },
+            {
+                message: 'Назад',
+                action: 'main-menu'
+            }
+        ]
     ]
 }

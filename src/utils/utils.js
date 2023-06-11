@@ -1,4 +1,4 @@
-import {FIAT} from "../src/const/const.js";
+import {FIAT} from "../const/const.js";
 
 export function getMarketProfit(unRealizedProfit) {
     return Number(unRealizedProfit) > 0 ? '🟢' : '🔴'
