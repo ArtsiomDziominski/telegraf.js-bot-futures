@@ -3,7 +3,6 @@ import {Markup, Telegraf} from "telegraf";
 import {AXIOS_HEADER, REQUEST_SERVER} from "../const/const.js";
 import axios from "axios";
 import UserStore from "../store/index.js";
-import {getBtnTrading} from "../buttons/inline-button.js";
 
 const bot = new Telegraf(TOKEN);
 
@@ -18,9 +17,13 @@ export async function cancelOpenOrder(symbol) {
 
 export async function checkUser(ctx) {
     const chatId = ctx.message?.chat?.id || ctx.update.callback_query.from.id;
-    const whitListUsers = await axios.get(DB_URL + '/users');
-    const idIndex = whitListUsers.data.findIndex(user => user.id === chatId);
-    return idIndex < 0;
+    try {
+        const whitListUsers = await axios.get(DB_URL + '/users');
+        const idIndex = whitListUsers.data.findIndex(user => user.id === chatId);
+        return idIndex >= 0;
+    } catch (e) {
+        return false;
+    }
 }
 
 export function parseButton(button) {

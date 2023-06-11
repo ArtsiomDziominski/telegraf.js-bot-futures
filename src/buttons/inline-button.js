@@ -16,13 +16,12 @@ export const btnProfit = Markup.inlineKeyboard([
 ])
 
 export async function getBtnTrading(ctx) {
-    if (await checkUser(ctx)) return {};
     const btnNotification = parseButton(BUTTONS.trading);
     return Markup.inlineKeyboard(btnNotification);
 }
 
 export async function getBtnSetting(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     return Markup.inlineKeyboard([
         [
             Markup.button.callback('Торговля', 'notification-trading'),
@@ -33,13 +32,11 @@ export async function getBtnSetting(ctx) {
 }
 
 export async function getBtnNotification(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     const btnNotification = await parseButton(getNotificationsBtn());
     return Markup.inlineKeyboard(btnNotification);
 }
 
 export async function getBtnMenu(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
     return Markup.inlineKeyboard(
         [[
             Markup.button.callback('💵 Торговля', 'trading'),
@@ -52,7 +49,6 @@ export async function getBtnMenu(ctx) {
 
 
 export function btnCancelOrders() {
-    if (!UserStore.isPassword) return;
     return axios.get(REQUEST_SERVER.GetWatchingList)
         .then(response => {
             const watchingSymbols = response.data;
@@ -69,7 +65,6 @@ export function btnCancelOrders() {
 }
 
 export function btnCurrentOrder() {
-    if (!UserStore.isPassword) return;
     const currentOrdersKeyboard = UserStore.currentOrders?.map(order => {
         return {
             text: order.symbol,
@@ -82,37 +77,37 @@ export function btnCurrentOrder() {
 }
 
 export async function getProfileBtn(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.profile);
     return Markup.inlineKeyboard(btnProfile);
 }
 
 export async function getProfileTelegramBtn(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.profileTelegram);
     return Markup.inlineKeyboard(btnProfile);
 }
 
 export async function getBtnBackToActionTelegram(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.backToActionTelegram);
     return Markup.inlineKeyboard(btnProfile);
 }
 
 export async function getSettingTrading(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(BUTTONS.settingTrading);
     return Markup.inlineKeyboard(btnProfile);
 }
 
 export async function getSettingTradingStep(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(getBtnSettingTradingStep());
     return Markup.inlineKeyboard(btnProfile);
 }
 
 export async function getSettingTradingSellOrderPercent(ctx) {
-    if (await checkUser(ctx)) return Markup.inlineKeyboard({});
+    if (!(await checkUser(ctx))) return Markup.inlineKeyboard({});
     const btnProfile = parseButton(getBtnSettingTradingSellOrderPercent());
     return Markup.inlineKeyboard(btnProfile);
 }

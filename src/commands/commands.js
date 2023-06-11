@@ -27,7 +27,7 @@ import {
     takeProfit, toggleNotificationNewOrder
 } from "./commands-function.js";
 import {buttonStart} from "../buttons/button.js";
-import {getStartMessage, getTradingMessage} from "../mixins/get-message.js";
+import {getMessageInfo, getStartMessage, getTradingMessage} from "../mixins/get-message.js";
 import {
     getMessageActionTelegram, getMessageSellOrderPercent, getMessageSetting,
     getMessageStepSellOrder,
@@ -35,6 +35,8 @@ import {
 } from "../message/message-profile.js";
 import {getBtnSettingTradingSellOrderPercent, getBtnSettingTradingStep} from "../const/buttons.js";
 import {setStepSellOrder, settingTradingSellOrderPercent, settingTradingStep} from "../components/setting-trading.js";
+import {getCommandCancelOrder, getCommandMenu, getCommandProfit} from "../components/commands/main-commands.js";
+import {getActionMainMenu, getActionNotificationSetting, getActionTrading} from "../components/commands/main-action.js";
 
 const bot = new Telegraf(TOKEN);
 
@@ -42,6 +44,7 @@ export function botCommandsStart() {
     bot.start(async (ctx) => ctx.reply(await getStartMessage(ctx)));
     bot.help((ctx) => ctx.reply('Send me a sticker'));
     bot.on(message('sticker'), (ctx) => ctx.reply('👍'));
+    bot.command('info', async (ctx) => ctx.reply(getMessageInfo()));
     botCommands();
     botAction();
     userMessage()
@@ -52,15 +55,15 @@ function botCommands() {
     bot.command('newOrder', async (ctx) => await newOrder(ctx));
     bot.command('neworder', async (ctx) => await newOrder(ctx));
     bot.command('watching', async (ctx) => await getWatchingSymbols(ctx));
-    bot.command('profit', async (ctx) => ctx.reply(await getCurrentOrders(ctx), await btnCurrentOrder()));
-    bot.command('cancelOrder', async (ctx) => ctx.reply(await getMessageCancelOpenOrder(ctx), await btnCancelOrders()));
-    bot.command('cancelorder', async (ctx) => ctx.reply(await getMessageCancelOpenOrder(ctx), await btnCancelOrders()));
+    bot.command('profit', async (ctx) => await getCommandProfit(ctx));
+    bot.command('cancelOrder', async (ctx) => await getCommandCancelOrder(ctx));
+    bot.command('cancelorder', async (ctx) => await getCommandCancelOrder(ctx));
     bot.command('logoutUser', async (ctx) => ctx.reply(await logoutUser(ctx)));
     bot.command('logoutuser', async (ctx) => ctx.reply(await logoutUser(ctx)));
     bot.command('cancelWatching', async (ctx) => ctx.reply(await cancelWatching(ctx)));
     bot.command('cancelwatching', async (ctx) => ctx.reply(await cancelWatching(ctx)));
 
-    bot.command('menu', async (ctx) => ctx.reply(await getTradingMessage(ctx), await getBtnMenu(ctx)));
+    bot.command('menu', async (ctx) => getCommandMenu(ctx));
 }
 
 function botAction() {
@@ -76,8 +79,8 @@ function botAction() {
 
 
 
-    bot.action('main-menu', async (ctx) => ctx.editMessageText('Меню:', await getBtnMenu(ctx)));
-    bot.action('notification-setting', async (ctx) => ctx.editMessageText(await getNotifications(), await getBtnNotification(ctx)));
+    bot.action('main-menu', async (ctx) => await getActionMainMenu());
+    bot.action('notification-setting', async (ctx) => await getActionNotificationSetting(ctx));
     // bot.action('notification-new-order', (ctx) => ctx.editMessageText(toggleNotificationNewOrder(), getBtnNotification(ctx)));
     bot.action('notification-new-order', async (ctx) => await setNotificationNewOrder(ctx));
     botActionMenu();
@@ -93,7 +96,7 @@ function userMessage() {
 
 
 function botActionMenu() {
-    bot.action('trading', async (ctx) => ctx.editMessageText(await getTradingMessage(ctx), await getBtnTrading(ctx)));
+    bot.action('trading', async (ctx) => await getActionTrading(ctx));
     bot.action('profile', async (ctx) => ctx.editMessageText('Профиль', await getProfileBtn(ctx)));
     bot.action('setting', async (ctx) => ctx.editMessageText(await getTradingMessage(ctx), await getBtnSetting(ctx)));
     botActionMenuProfile();
