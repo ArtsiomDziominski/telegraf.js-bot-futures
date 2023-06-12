@@ -64,6 +64,10 @@ export const BUTTONS = {
             {
                 message: '% ордер продажи',
                 action: 'sell-order-percent'
+            },
+            {
+                message: 'Обновление сервера',
+                action: 'update-server'
             }
         ],
         [{
@@ -157,6 +161,47 @@ export function getBtnSettingTradingSellOrderPercent() {
             {
                 message: (User.settingTrading.sellOrderPercent < 2 ? '✅ Отключено' : 'Отключить'),
                 action: 'setting-trading-SellOrderPercent-0'
+            },
+            {
+                message: 'Назад',
+                action: 'main-menu'
+            }
+        ]
+    ]
+}
+
+export function getBtnSettingTradingUpdateServer() {
+    return [
+        [
+            {
+                message: (User.settingTrading.updateServer === 3 ? '✅ ' : '') + '3',
+                action: 'setting-trading-UpdateServer-3'
+            },
+            {
+                message: (User.settingTrading.updateServer === 4 ? '✅ ' : '') + '4',
+                action: 'setting-trading-UpdateServer-4'
+            },
+            {
+                message: (User.settingTrading.updateServer === 5 ? '✅ ' : '') + '5',
+                action: 'setting-trading-UpdateServer-5'
+            },
+            {
+                message: (User.settingTrading.updateServer === 6 ? '✅ ' : '') + '6',
+                action: 'setting-trading-UpdateServer-6'
+            }
+        ],
+        [
+            {
+                message: (User.settingTrading.updateServer === 7 ? '✅ ' : '') + '7',
+                action: 'setting-trading-UpdateServer-7'
+            },
+            {
+                message: (User.settingTrading.updateServer === 8 ? '✅ ' : '') + '8',
+                action: 'setting-trading-UpdateServer-8'
+            },
+            {
+                message: (User.settingTrading.updateServer <= 0 ? '✅ Отключено' : 'Остановить сервер'),
+                action: 'setting-trading-UpdateServer-0'
             },
             {
                 message: 'Назад',

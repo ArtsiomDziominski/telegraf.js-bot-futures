@@ -5,7 +5,7 @@ import UserStore from "../store/index.js";
 import {
     BUTTONS,
     getBtnSettingTradingSellOrderPercent,
-    getBtnSettingTradingStep,
+    getBtnSettingTradingStep, getBtnSettingTradingUpdateServer,
     getNotificationsBtn
 } from "../const/buttons.js";
 import {checkUser, parseButton} from "../mixins/helper.js";
@@ -112,3 +112,7 @@ export async function getSettingTradingSellOrderPercent(ctx) {
     return Markup.inlineKeyboard(btnProfile);
 }
 
+export async function getSettingUpdateServer(ctx) {
+    const btnProfile = parseButton(getBtnSettingTradingUpdateServer());
+    return Markup.inlineKeyboard(btnProfile);
+}

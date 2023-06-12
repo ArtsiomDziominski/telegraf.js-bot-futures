@@ -30,6 +30,11 @@ export async function getMessageSellOrderPercent() {
     return `Как сработает ордер, бот автоматически выставит ордер на продажу с процентом`;
 }
 
+export async function getMessageSettingUpdateServer() {
+    User.settingTrading = (await axios.get(REQUEST_DB.settingTrading)).data;
+    return `Обновлени серевера ${User.settingTrading.updateServer}`;
+}
+
 export function getMessageSetting() {
     return 'Настройки торговли:'
 }
