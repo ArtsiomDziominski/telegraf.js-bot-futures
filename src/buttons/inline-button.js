@@ -3,7 +3,7 @@ import axios from "axios";
 import {MESSAGE, REQUEST_SERVER} from "../const/const.js";
 import UserStore from "../store/index.js";
 import {
-    BUTTONS,
+    BUTTONS, getBtnSettingTradingCheckCurrentOrder,
     getBtnSettingTradingSellOrderPercent,
     getBtnSettingTradingStep, getBtnSettingTradingUpdateServer,
     getNotificationsBtn
@@ -114,5 +114,10 @@ export async function getSettingTradingSellOrderPercent(ctx) {
 
 export async function getSettingUpdateServer(ctx) {
     const btnProfile = parseButton(getBtnSettingTradingUpdateServer());
+    return Markup.inlineKeyboard(btnProfile);
+}
+
+export async function getInlineBtnSettingTradingCheckCurrentOrder(ctx) {
+    const btnProfile = parseButton(await getBtnSettingTradingCheckCurrentOrder());
     return Markup.inlineKeyboard(btnProfile);
 }

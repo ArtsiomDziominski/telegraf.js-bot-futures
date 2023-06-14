@@ -1,5 +1,7 @@
 import UserStore from "../store/index.js";
 import User from "../store/index.js";
+import axios from "axios";
+import {REQUEST_DB} from "./const.js";
 
 export const BUTTONS = {
     notification: [],
@@ -70,15 +72,35 @@ export const BUTTONS = {
                 action: 'update-server'
             }
         ],
-        [{
-            message: 'Назад',
-            action: 'main-menu'
-        }]
+        [
+            {
+                message: 'Активные ордера',
+                action: 'check-current-order'
+            },
+            {
+                message: 'Назад',
+                action: 'main-menu'
+            }
+        ]
     ],
     backToActionTelegram: [
         [{
             message: 'Назад',
             action: 'action-telegram'
+        }]
+    ]
+}
+
+export async function getBtnSettingTradingCheckCurrentOrder() {
+    User.settingTrading = (await axios.get(REQUEST_DB.settingTrading)).data;
+    return [
+        [{
+            message: (UserStore.settingTrading.isCurrentOrder ? '✅ ' : '') + 'Проверить активные ордера',
+            action: 'set-check-current-order'
+        }],
+        [{
+            message: 'Назад',
+            action: 'main-menu'
         }]
     ]
 }

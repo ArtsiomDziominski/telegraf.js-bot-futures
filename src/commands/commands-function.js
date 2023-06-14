@@ -23,7 +23,8 @@ export async function newOrder(ctx) {
         decimal: messageNewOrder[6]
     }
     axios.post(REQUEST_SERVER.NewOrder, newOrderParams, AXIOS_HEADER)
-        .then(r => sendAnswer(chatId, r.status === MESSAGE_CODE.Success ? r.data : MESSAGE.Error));
+        .then(r => sendAnswer(chatId, r.status === MESSAGE_CODE.Success ? r.data : MESSAGE.Error))
+        .catch(r => sendAnswer(chatId, MESSAGE.ErrorRequestServer));
     return ctx.reply(MESSAGE.SendNewOrder);
 }
 
@@ -63,7 +64,9 @@ export async function getCurrentOrders(ctx) {
                 .forEach(order => text = text + `${getMarketProfit(order.unRealizedProfit)} ${order.symbol}: ${Number(order.unRealizedProfit).toFixed(2)}$       ${order.positionAmt} ${removeNameFiat(order.symbol)}\n`);
             return text
         })
-        .catch(reason => 'Что-то пошло не так...')
+        .catch(reason => {
+            return MESSAGE.ErrorRequestServer;
+        })
 }
 
 export async function setPassword(ctx) {

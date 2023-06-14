@@ -26,6 +26,7 @@ import {
     getMessageTelegramVisit
 } from "../message/message-profile.js";
 import {
+    getSettingTradingCheckCurrentOrder, getSettingTradingSetCheckCurrentOrder,
     getSettingTradingUpdateServer,
     settingTradingSellOrderPercent,
     settingTradingStep,
@@ -124,9 +125,11 @@ function botActionSettingTrading() {
     bot.action('step-sell-order', async (ctx) => ctx.editMessageText(await getMessageStepSellOrder(ctx), await getSettingTradingStep(ctx)));
     bot.action('sell-order-percent', async (ctx) => ctx.editMessageText(await getMessageSellOrderPercent(ctx), await getSettingTradingSellOrderPercent(ctx)));
     bot.action('update-server', async (ctx) => getSettingTradingUpdateServer(ctx));
+    bot.action('check-current-order', async (ctx) => getSettingTradingCheckCurrentOrder(ctx));
     botActionSettingTradingStepSellOrder();
     botActionSettingTradingSellOrderPercent();
     botActionSettingTradingUpdateServer();
+    bot.action('set-check-current-order', async (ctx) => getSettingTradingSetCheckCurrentOrder(ctx));
 }
 
 function botActionSettingTradingUpdateServer() {
