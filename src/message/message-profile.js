@@ -5,6 +5,7 @@ import {checkLineBreak, getDateTimeformat} from "../utils/utils.js";
 import axios from "axios";
 import {DB_URL} from "../../config/config.js";
 import {REQUEST_DB} from "../const/const.js";
+import {getSettingTradingCheckCurrentOrder} from "../components/setting-trading.js";
 
 export function getMessageActionTelegram() {
     return 'Просмотреть действия в вашем аккаунте';
@@ -33,6 +34,10 @@ export async function getMessageSellOrderPercent() {
 export async function getMessageSettingUpdateServer() {
     User.settingTrading = (await axios.get(REQUEST_DB.settingTrading)).data;
     return `Обновлени серевера ${User.settingTrading.updateServer}`;
+}
+
+export function getMessageSettingCheckCurrentOrder() {
+    return `При создании нового ордера БОТ проверят на активные ордера`;
 }
 
 export function getMessageSetting() {

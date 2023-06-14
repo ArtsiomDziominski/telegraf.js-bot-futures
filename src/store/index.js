@@ -8,7 +8,7 @@ class User {
     notifications = {
         infoNewOrder: false
     };
-    settingTrading = {stepSellOrder: 0, sellOrderPercent: 0, requestToServer: 5, updateServer: 3};
+    settingTrading = {stepSellOrder: 0, sellOrderPercent: 0, requestToServer: 5, updateServer: 3, isCurrentOrder: true};
     info = {requestToServerTime: 0, isRequestToServer: false};
 }
 
