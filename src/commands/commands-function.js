@@ -131,6 +131,7 @@ export async function toggleNotificationNewOrder(ctx) {
 }
 
 export async function getNotifications() {
+    UserStore.notifications = (await axios.get(REQUEST_DB.notifications)).data;
     return 'Настройка уведомлений:'
 }
 

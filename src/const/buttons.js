@@ -107,10 +107,16 @@ export async function getBtnSettingTradingCheckCurrentOrder() {
 
 export function getNotificationsBtn() {
     return [
-        [{
-            message: (UserStore.notifications.infoNewOrder ? '✅ ' : '') + 'Закрытие позиции',
-            action: 'notification-new-order'
-        }],
+        [
+            {
+                message: (UserStore.notifications.infoNewOrder ? '✅ ' : '') + 'Закрытие позиции',
+                action: 'notification-new-order'
+            },
+            {
+                message: (UserStore.notifications.isWorkedOrder ? '✅ ' : '') + 'Срабатывание ордера',
+                action: 'notification-worked-order'
+            }
+        ],
         [{
             message: 'Назад',
             action: 'main-menu'

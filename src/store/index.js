@@ -5,9 +5,7 @@ class User {
     isPassword = false;
     currentOrders = {};
     whitList = [];
-    notifications = {
-        infoNewOrder: false
-    };
+    notifications = {infoNewOrder: false, isWorkedOrder: true};
     settingTrading = {stepSellOrder: 0, sellOrderPercent: 0, requestToServer: 5, updateServer: 3, isCurrentOrder: true};
     info = {requestToServerTime: 0, isRequestToServer: false};
 }
