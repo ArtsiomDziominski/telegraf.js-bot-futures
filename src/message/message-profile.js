@@ -1,6 +1,6 @@
 import {getMessage} from "../mixins/helper.js";
 import User from "../store/index.js";
-import {getProfileTelegramBtn} from "../buttons/inline-button.js";
+import {getBtnNotification, getProfileTelegramBtn} from "../buttons/inline-button.js";
 import {checkLineBreak, getDateTimeformat} from "../utils/utils.js";
 import axios from "axios";
 import {DB_URL} from "../../config/config.js";
@@ -42,4 +42,11 @@ export function getMessageSettingCheckCurrentOrder() {
 
 export function getMessageSetting() {
     return 'Настройки торговли:'
+}
+
+export async function getSettingNotificationWorkedOrder(ctx) {
+    User.notifications.isWorkedOrder = !User.notifications.isWorkedOrder;
+    await axios.patch(REQUEST_DB.notifications, User.notifications)
+    const text = `Уведомление о срабатывание ордера ${User.notifications.isWorkedOrder ? 'включено' : 'выключено'}`;
+    return getMessage(ctx, text, getBtnNotification(ctx));
 }

@@ -34,6 +34,7 @@ import {
 } from "../components/setting-trading.js";
 import {getCommandCancelOrder, getCommandMenu, getCommandProfit} from "../components/commands/main-commands.js";
 import {getActionMainMenu, getActionNotificationSetting, getActionTrading} from "../components/commands/main-action.js";
+import {getNotificationWorkedOrder} from "../components/commands/actions/setting-notification.js";
 
 const bot = new Telegraf(TOKEN);
 
@@ -79,8 +80,14 @@ function botAction() {
     bot.action('main-menu', async (ctx) => await getActionMainMenu(ctx));
     bot.action('notification-setting', async (ctx) => await getActionNotificationSetting(ctx));
     // bot.action('notification-new-order', (ctx) => ctx.editMessageText(toggleNotificationNewOrder(), getBtnNotification(ctx)));
-    bot.action('notification-new-order', async (ctx) => await setNotificationNewOrder(ctx));
     botActionMenu();
+    botActionNotification();
+}
+
+function botActionNotification() {
+    bot.action('notification-new-order', async (ctx) => await setNotificationNewOrder(ctx));
+    bot.action('notification-worked-order', async (ctx) => await getNotificationWorkedOrder(ctx));
+
 }
 
 function userMessage() {
